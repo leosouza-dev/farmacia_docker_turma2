@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: dbfarmacia
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_farmacia
+    volumes:
+      - volume-db-farmacia:/var/lib/mysql
+    ports:
+      - "3333:3306"
+    networks:
+      - redeapi
+
+  spring_api:
+    image: springapi
+    container_name: api-spring
+    ports:
+      - "8080:8080"
+    environment:
+      MYSQL_HOST: dbfarmacia
+      MYSQL_DATABASE: db_farmacia
+    networks:
+      - redeapi
+    depends_on:
+      - mysql
+
+networks:
+  redeapi:
+    driver: bridge
+
+volumes:
+  volume-db-farmacia:
+    external: true
+
